@@ -4,9 +4,9 @@
     <version value="1"/>
 
     <list>
-        <mapping class="com.luyang.coolweather.vo.Province"></mapping>
-        <mapping class="com.luyang.coolweather.vo.city"></mapping>
-        <mapping class="com.luyang.coolweather.vo.County"></mapping>
+        <mapping class="com.luyang.coolweather.vo.Province" />
+        <mapping class="com.luyang.coolweather.vo.City" />
+        <mapping class="com.luyang.coolweather.vo.County" />
 
     </list>
 

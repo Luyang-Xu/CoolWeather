@@ -1,6 +1,8 @@
 package com.luyang.coolweather.util;
 
 import android.text.TextUtils;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.luyang.coolweather.vo.City;
@@ -24,19 +26,22 @@ public class Utility {
      * @return
      */
     public static boolean handleProvince(String response) {
-        if (!TextUtils.isEmpty(response)) {
-            List<Province> provinceArr = gson.fromJson(response, new TypeToken<List<Province>>() {
-            }.getType());
-            provinceArr.forEach((p) -> {
-                Province pp = new Province();
-                pp.setProvinceName(p.getProvinceName());
-                pp.setProvinceCode(p.getProvinceCode());
-                pp.save();
-            });
-            return true;
-        } else {
-            return false;
+        try {
+            if (!TextUtils.isEmpty(response)) {
+                List<Province> provinceArr = gson.fromJson(response, new TypeToken<List<Province>>() {
+                }.getType());
+                provinceArr.forEach((p) -> {
+                    Province pp = new Province();
+                    pp.setProvinceName(p.getProvinceName());
+                    pp.setProvinceCode(p.getProvinceCode());
+                    pp.save();
+                });
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     public static boolean handleCity(String response, int provinceId) {
