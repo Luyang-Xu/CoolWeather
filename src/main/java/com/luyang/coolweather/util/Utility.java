@@ -52,7 +52,7 @@ public class Utility {
     public static boolean handleProvinces(String response) {
         try {
             Log.d("RESPONSE",response);
-            if (TextUtils.isEmpty(response)) {
+            if (!TextUtils.isEmpty(response)) {
                 JSONArray allProvinces = new JSONArray(response);
                 for (int i = 0; i < allProvinces.length(); i++) {
                     JSONObject j = allProvinces.getJSONObject(i);
