@@ -1,13 +1,18 @@
 package com.luyang.coolweather.util;
 
 import android.text.TextUtils;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.luyang.coolweather.vo.City;
 import com.luyang.coolweather.vo.County;
 import com.luyang.coolweather.vo.Province;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -38,6 +43,28 @@ public class Utility {
                 });
                 return true;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean handleProvinces(String response) {
+        try {
+            Log.d("RESPONSE",response);
+            if (TextUtils.isEmpty(response)) {
+                JSONArray allProvinces = new JSONArray(response);
+                for (int i = 0; i < allProvinces.length(); i++) {
+                    JSONObject j = allProvinces.getJSONObject(i);
+                    Log.d("Name",j.getString("name"));
+                    Province p = new Province();
+                    p.setProvinceName(j.getString("name"));
+                    p.setProvinceCode(j.getInt("id"));
+                    p.save();
+                }
+                return true;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

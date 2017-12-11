@@ -186,7 +186,8 @@ public class ChooseAreaFragment extends Fragment {
                 Log.d("JSONDATA",jsonData);
                 boolean result = false;
                 if (type.equals("province")) {
-                    result = Utility.handleProvince(jsonData);
+                    //TEST
+                    result = Utility.handleProvinces(jsonData);
                 } else if (type.equals("city")) {
                     result = Utility.handleCity(jsonData, selectedProvince.getId());
                 } else if (type.equals("county")) {
