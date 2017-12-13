@@ -9,20 +9,19 @@ import com.google.gson.annotations.SerializedName;
 public class Basic {
 
     @SerializedName("city")
-     String cityName;
+    public String cityName;
 
     @SerializedName("id")
-     int weatherId;
+    public int weatherId;
 
-     Update update;
+    public Update update;
 
-     class Update{
+    public class Update {
 
-         @SerializedName("loc")
-         public  String updateTime;
+        @SerializedName("loc")
+        public String updateTime;
 
-     }
-
+    }
 
 
 }

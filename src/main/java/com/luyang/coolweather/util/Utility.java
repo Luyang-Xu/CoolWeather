@@ -10,8 +10,10 @@ import com.google.gson.reflect.TypeToken;
 import com.luyang.coolweather.vo.City;
 import com.luyang.coolweather.vo.County;
 import com.luyang.coolweather.vo.Province;
+import com.luyang.coolweather.vo.Weather;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -23,6 +25,20 @@ import java.util.List;
 public class Utility {
 
     private static Gson gson = new Gson();
+
+
+
+    public static Weather handleWeatherData(String response){
+        try {
+            JSONObject jb=new JSONObject(response);
+            JSONArray arr= jb.getJSONArray("HeWeather");
+            String weatherContent = arr.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent,Weather.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * handle province data
@@ -51,12 +67,12 @@ public class Utility {
 
     public static boolean handleProvinces(String response) {
         try {
-            Log.d("RESPONSE",response);
+            Log.d("RESPONSE", response);
             if (!TextUtils.isEmpty(response)) {
                 JSONArray allProvinces = new JSONArray(response);
                 for (int i = 0; i < allProvinces.length(); i++) {
                     JSONObject j = allProvinces.getJSONObject(i);
-                    Log.d("Name",j.getString("name"));
+                    Log.d("Name", j.getString("name"));
                     Province p = new Province();
                     p.setProvinceName(j.getString("name"));
                     p.setProvinceCode(j.getInt("id"));
@@ -89,6 +105,29 @@ public class Utility {
         }
     }
 
+    public static boolean handleCities(String response, int provinceId) {
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONArray allCities = new JSONArray(response);
+                for (int i = 0; i < allCities.length(); i++) {
+                    JSONObject j = allCities.getJSONObject(i);
+                    City c = new City();
+                    c.setCityName(j.getString("name"));
+                    c.setCityCode(j.getInt("id"));
+                    c.setProvinceId(provinceId);
+                    c.save();
+                }
+
+                return true;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     public static boolean handleCounty(String response, int cityId) {
         if (!TextUtils.isEmpty(response)) {
             List<County> cityArr = gson.fromJson(response, new TypeToken<List<County>>() {
@@ -104,5 +143,26 @@ public class Utility {
         } else {
             return false;
         }
+    }
+
+    public static boolean handleCounties(String response, int cityId) {
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONArray allCounties = new JSONArray(response);
+                for (int i = 0; i < allCounties.length(); i++) {
+                    JSONObject j = allCounties.getJSONObject(i);
+                    County c = new County();
+                    c.setCountyName(j.getString("name"));
+                    c.setWeatherId(j.getString("weatherId"));
+                    c.setCityId(cityId);
+                    c.save();
+                }
+                return true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }
