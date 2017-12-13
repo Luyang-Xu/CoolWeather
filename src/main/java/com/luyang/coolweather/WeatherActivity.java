@@ -5,9 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -56,6 +60,17 @@ public class WeatherActivity extends AppCompatActivity {
 
     private ImageView bingPicImg;
 
+    //实现下拉刷新天气
+    public SwipeRefreshLayout swipeRefreshLayout;
+
+    private String mWeatherId;
+
+    //实现滑动菜单选择城市
+    public DrawerLayout drawerLayout;
+
+    private Button nav;
+
+
     /**
      * 初始化界面
      *
@@ -65,9 +80,9 @@ public class WeatherActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //设置状态栏与北京一体化
+        //设置状态栏与背景一体化
         View decorview = getWindow().getDecorView();
-        decorview.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        decorview.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         setContentView(R.layout.activity_weather);
@@ -96,15 +111,24 @@ public class WeatherActivity extends AppCompatActivity {
 
         bingPicImg = findViewById(R.id.bing_pic_img);
 
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        nav=findViewById(R.id.nav_button);
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
         String weatherInfo = pref.getString("weather", null);
         String bingPic = pref.getString("bing_pic", null);
 
         if (weatherInfo != null) {
             Weather weather = Utility.handleWeatherData(weatherInfo);
+            mWeatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
         } else {
+
             String weatherId = getIntent().getStringExtra("weather_id");
+            mWeatherId = weatherId;
             weaterLayout.setVisibility(View.INVISIBLE);
             queryFromServer(weatherId);
         }
@@ -114,6 +138,22 @@ public class WeatherActivity extends AppCompatActivity {
         } else {
             loadBingPic();
         }
+
+        //下拉刷新更新天气监听
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                queryFromServer(mWeatherId);
+            }
+        });
+
+        //滑动菜单
+        nav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
 
     }
 
@@ -131,6 +171,7 @@ public class WeatherActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_LONG).show();
                 });
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -141,12 +182,15 @@ public class WeatherActivity extends AppCompatActivity {
                     if (weather != null && "ok".equals(weather.status)) {
                         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
                         editor.putString("weather", weatherContent);
+                        mWeatherId = weather.basic.weatherId;
                         editor.apply();
                         showWeatherInfo(weather);
                         loadBingPic();
                     } else {
                         Toast.makeText(WeatherActivity.this, "加载出错", Toast.LENGTH_LONG).show();
                     }
+                    //设置下拉刷新不可用，将加载样式取消掉，取消进度条
+                    swipeRefreshLayout.setRefreshing(false);
 
                 });
 

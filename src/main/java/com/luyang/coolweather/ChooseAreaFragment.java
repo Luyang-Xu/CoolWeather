@@ -15,15 +15,19 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.luyang.coolweather.util.HttpUtil;
 import com.luyang.coolweather.util.Utility;
 import com.luyang.coolweather.vo.City;
 import com.luyang.coolweather.vo.County;
 import com.luyang.coolweather.vo.Province;
+
 import org.litepal.crud.DataSupport;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -90,12 +94,23 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == city_level) {
                     selectedCity = cityList.get(position);
                     queryCounty();
-                } else if(currentLevel == county_level){
+                } else if (currentLevel == county_level) {
                     String weatherId = countyList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    //主活动跳转
+                    if (getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        //滑动菜单处理，关闭菜单
+                        WeatherActivity wa = (WeatherActivity) getActivity();
+                        wa.drawerLayout.closeDrawers();
+                        wa.swipeRefreshLayout.setRefreshing(true);
+                        wa.queryFromServer(weatherId);
+                    }
+
+
                 }
             }
         });
@@ -190,7 +205,7 @@ public class ChooseAreaFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonData = response.body().string();
-                Log.d("JSONDATA",jsonData);
+                Log.d("JSONDATA", jsonData);
                 boolean result = false;
                 if (type.equals("province")) {
                     //TEST
