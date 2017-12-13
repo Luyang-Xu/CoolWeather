@@ -1,5 +1,6 @@
 package com.luyang.coolweather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.luyang.coolweather.service.UpdateService;
 import com.luyang.coolweather.util.HttpUtil;
 import com.luyang.coolweather.util.Utility;
 import com.luyang.coolweather.vo.Weather;
@@ -232,6 +234,9 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(weather.suggestion.carWash.info);
         sportText.setText(weather.suggestion.sport.info);
         weaterLayout.setVisibility(View.VISIBLE);
+        //激活后台服务更新
+        Intent intent = new Intent(this, UpdateService.class);
+        startService(intent);
 
     }
 
