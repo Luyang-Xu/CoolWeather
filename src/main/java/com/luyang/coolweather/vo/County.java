@@ -28,7 +28,7 @@ public class County extends DataSupport {
     }
 
     public void setCityId(int cityId) {
-        cityId = cityId;
+        this.cityId = cityId;
     }
 
     public int getId() {
