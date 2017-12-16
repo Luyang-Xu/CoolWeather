@@ -213,10 +213,10 @@ public class WeatherActivity extends AppCompatActivity {
         forecastLayout.removeAllViews();
         weather.forecastList.forEach((w) -> {
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
-            TextView maxText = findViewById(R.id.max_text);
-            TextView minText = findViewById(R.id.min_text);
-            TextView dateText = findViewById(R.id.date_text);
-            TextView infoText = findViewById(R.id.info_text);
+            TextView maxText = view.findViewById(R.id.max_text);
+            TextView minText = view.findViewById(R.id.min_text);
+            TextView dateText = view.findViewById(R.id.date_text);
+            TextView infoText = view.findViewById(R.id.info_text);
 
             maxText.setText(w.temperature.max);
             minText.setText(w.temperature.min);

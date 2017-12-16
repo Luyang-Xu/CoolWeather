@@ -205,7 +205,6 @@ public class ChooseAreaFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonData = response.body().string();
-                Log.d("JSONDATA", jsonData);
                 boolean result = false;
                 if (type.equals("province")) {
                     //TEST
